@@ -36,6 +36,10 @@
       }
 
       .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+
         .fab-button {
           width: 64px;
           height: 64px;
@@ -83,6 +87,18 @@
 
           &:hover mat-icon {
             transform: rotate(-5deg) scale(1.1);
+          }
+        }
+
+        .debug-button {
+          color: rgba(255, 255, 255, 0.8);
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+
+          &:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
           }
         }
       }
@@ -706,42 +722,6 @@
       .card-actions {
         padding: 0 16px 16px 16px;
       }
-    }
-  }
-}
-
-// Dark theme support
-[data-theme="dark"] {
-  .course-list-container {
-
-    .stat-card,
-    .filters-card,
-    .course-card,
-    .empty-state {
-      background: #2d2d2d;
-      border-color: #404040;
-      color: #ffffff;
-
-      .stat-number,
-      .course-title,
-      h2,
-      h3 {
-        color: #ffffff;
-      }
-
-      .stat-label,
-      .course-description,
-      p {
-        color: #cccccc;
-      }
-    }
-
-    .courses-section .section-header h2 {
-      color: #ffffff;
-    }
-
-    .empty-state .empty-icon mat-icon {
-      color: #555555;
     }
   }
 }

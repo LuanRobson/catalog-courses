@@ -20,12 +20,15 @@
     },
     {
       "id": 3,
-      "name": "Node.js e Express",
+      "name": "Node.js e Express 2",
       "category": "Backend",
-      "description": "Desenvolvimento de APIs RESTful com Node.js e Express. Crie servidores robustos, integre com bancos de dados e implemente autenticação JWT.",
+      "description": "Desenvolvimento de APIs RESTful com Node.js e Express. Crie servidores robustos, integre com bancos de dados e implemente autenticação JWT. 2",
       "workload": 50,
+      "hasPrerequisites": false,
+      "isCertified": true,
+      "isActive": true,
       "createdAt": "2024-02-01T00:00:00.000Z",
-      "updatedAt": "2024-02-01T00:00:00.000Z"
+      "updatedAt": "2025-08-05T14:57:27.367Z"
     },
     {
       "id": 4,
@@ -65,12 +68,15 @@
     },
     {
       "id": 8,
-      "name": "Machine Learning Avançado",
-      "category": "Artificial Intelligence",
-      "description": "Algoritmos avançados de machine learning, deep learning com TensorFlow e PyTorch. Implemente redes neurais e modelos de IA.",
-      "workload": 90,
-      "createdAt": "2024-03-01T00:00:00.000Z",
-      "updatedAt": "2024-03-01T00:00:00.000Z"
+      "name": "Machine learning",
+      "category": "Frontend",
+      "description": "43rt43rt43rf43r43r43r43",
+      "workload": 44,
+      "hasPrerequisites": false,
+      "isCertified": true,
+      "isActive": true,
+      "createdAt": "2025-08-05T14:58:01.243Z",
+      "updatedAt": "2025-08-05T14:58:01.243Z"
     }
   ]
 }

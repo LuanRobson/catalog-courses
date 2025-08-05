@@ -12,6 +12,29 @@
         <button mat-fab color="primary" (click)="addNewCourse()" class="fab-button">
           <mat-icon>add</mat-icon>
         </button>
+        <button mat-icon-button [matMenuTriggerFor]="debugMenu" class="debug-button">
+          <mat-icon>settings</mat-icon>
+        </button>
+        <mat-menu #debugMenu="matMenu">
+          <button mat-menu-item (click)="exportData()">
+            <mat-icon>download</mat-icon>
+            <span>Exportar Dados</span>
+          </button>
+          <button mat-menu-item (click)="importFile.click()">
+            <mat-icon>upload</mat-icon>
+            <span>Importar Dados</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="resetToMockData()">
+            <mat-icon>refresh</mat-icon>
+            <span>Resetar para Dados Iniciais</span>
+          </button>
+          <button mat-menu-item (click)="clearLocalStorage()" class="delete-action">
+            <mat-icon>delete_forever</mat-icon>
+            <span>Limpar Todos os Dados</span>
+          </button>
+        </mat-menu>
+        <input #importFile type="file" accept=".json" (change)="importData($event)" style="display: none;">
       </div>
     </div>
   </div>

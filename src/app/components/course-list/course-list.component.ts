@@ -192,4 +192,50 @@ export class CourseListComponent implements OnInit, OnDestroy {
     if (workload <= 60) return "Requer conhecimento básico prévio";
     return "Destinado a estudantes avançados";
   }
+
+  // Métodos para gerenciar localStorage
+  clearLocalStorage(): void {
+    if (confirm('Tem certeza que deseja limpar todos os dados salvos? Esta ação não pode ser desfeita.')) {
+      this.courseService.clearLocalStorage();
+    }
+  }
+
+  resetToMockData(): void {
+    if (confirm('Tem certeza que deseja resetar para os dados iniciais? Todos os dados atuais serão perdidos.')) {
+      this.courseService.resetToMockData();
+    }
+  }
+
+  exportData(): void {
+    this.courses$.pipe(takeUntil(this.destroy$)).subscribe(courses => {
+      const dataStr = JSON.stringify(courses, null, 2);
+      const dataBlob = new Blob([dataStr], { type: 'application/json' });
+      const url = URL.createObjectURL(dataBlob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'catalog-courses-backup.json';
+      link.click();
+      URL.revokeObjectURL(url);
+    });
+  }
+
+  importData(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        try {
+          const courses = JSON.parse(e.target.result);
+          if (Array.isArray(courses)) {
+            this.courseService.importData(courses);
+          } else {
+            alert('Arquivo inválido. O arquivo deve conter um array de cursos.');
+          }
+        } catch (error) {
+          alert('Erro ao ler o arquivo. Verifique se é um arquivo JSON válido.');
+        }
+      };
+      reader.readAsText(file);
+    }
+  }
 }
