@@ -1,0 +1,300 @@
+<div class="course-form-container">
+  <!-- Hero Section -->
+  <div class="form-hero">
+    <div class="hero-content">
+      <nav class="breadcrumb-nav">
+        <button mat-button (click)="goBack()" class="breadcrumb-button">
+          <mat-icon>arrow_back</mat-icon>
+          <span>Voltar ao Catálogo</span>
+        </button>
+        <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+        <span class="breadcrumb-current">{{
+          isEditMode ? "Editar Curso" : "Novo Curso"
+          }}</span>
+      </nav>
+
+      <div class="hero-header">
+        <div class="header-icon">
+          <mat-icon>{{ isEditMode ? "edit" : "add_circle" }}</mat-icon>
+        </div>
+        <div class="header-text">
+          <h1>{{ isEditMode ? "Editar Curso" : "Criar Novo Curso" }}</h1>
+          <p>
+            {{
+            isEditMode
+            ? "Atualize as informações do curso"
+            : "Preencha os campos abaixo para adicionar um novo curso ao catálogo"
+            }}
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Section -->
+  <div class="form-section">
+    <div class="form-container">
+      <!-- Progress Indicator -->
+      <div class="progress-indicator">
+        <div class="progress-step" [class.active]="currentStep >= 1" [class.completed]="currentStep > 1">
+          <div class="step-circle">
+            <mat-icon *ngIf="currentStep > 1">check</mat-icon>
+            <span *ngIf="currentStep <= 1">1</span>
+          </div>
+          <span class="step-label">Informações Básicas</span>
+        </div>
+        <div class="progress-line" [class.completed]="currentStep > 1"></div>
+        <div class="progress-step" [class.active]="currentStep >= 2" [class.completed]="currentStep > 2">
+          <div class="step-circle">
+            <mat-icon *ngIf="currentStep > 2">check</mat-icon>
+            <span *ngIf="currentStep <= 2">2</span>
+          </div>
+          <span class="step-label">Detalhes do Curso</span>
+        </div>
+        <div class="progress-line" [class.completed]="currentStep > 2"></div>
+        <div class="progress-step" [class.active]="currentStep >= 3">
+          <div class="step-circle">
+            <span>3</span>
+          </div>
+          <span class="step-label">Revisão</span>
+        </div>
+      </div>
+
+      <!-- Form Card -->
+      <mat-card class="form-card">
+        <form [formGroup]="courseForm" (ngSubmit)="onSubmit()" #form="ngForm">
+          <!-- Step 1: Basic Information -->
+          <div class="form-step" *ngIf="currentStep === 1">
+            <div class="step-header">
+              <mat-icon>info</mat-icon>
+              <h2>Informações Básicas</h2>
+              <p>Vamos começar com as informações essenciais do curso</p>
+            </div>
+
+            <div class="form-fields">
+              <div class="field-group">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Nome do Curso</mat-label>
+                  <input matInput formControlName="name" placeholder="Ex: Angular para Iniciantes"
+                    (input)="validateStep1()" />
+                  <mat-icon matSuffix>title</mat-icon>
+                  <mat-hint>Escolha um nome claro e descritivo</mat-hint>
+                  <mat-error *ngIf="isFieldInvalid('name')">
+                    {{ getErrorMessage("name") }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="field-group">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Categoria</mat-label>
+                  <mat-select formControlName="category" (selectionChange)="validateStep1()">
+                    <mat-option value="">Selecione uma categoria</mat-option>
+                    <mat-option *ngFor="let category of categories" [value]="category">
+                      <mat-icon>{{ getCategoryIcon(category) }}</mat-icon>
+                      {{ category }}
+                    </mat-option>
+                  </mat-select>
+                  <mat-icon matSuffix>category</mat-icon>
+                  <mat-hint>Selecione a área de conhecimento principal</mat-hint>
+                  <mat-error *ngIf="isFieldInvalid('category')">
+                    {{ getErrorMessage("category") }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <div class="field-group">
+                <mat-form-field appearance="outline" class="workload-field">
+                  <mat-label>Carga Horária</mat-label>
+                  <input matInput type="number" formControlName="workload" placeholder="40" min="1" max="1000"
+                    (input)="validateStep1()" />
+                  <span matTextSuffix>horas</span>
+                  <mat-icon matSuffix>schedule</mat-icon>
+                  <mat-hint>Duração estimada em horas</mat-hint>
+                  <mat-error *ngIf="isFieldInvalid('workload')">
+                    {{ getErrorMessage("workload") }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Difficulty Preview -->
+              <div class="difficulty-preview" *ngIf="courseForm.get('workload')?.value">
+                <div class="preview-card">
+                  <mat-icon>trending_up</mat-icon>
+                  <div class="preview-content">
+                    <h4>
+                      Nível:
+                      {{ getDifficulty(courseForm.get("workload")?.value) }}
+                    </h4>
+                    <p>
+                      {{
+                      getDifficultyDescription(
+                      courseForm.get("workload")?.value
+                      )
+                      }}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 2: Course Details -->
+          <div class="form-step" *ngIf="currentStep === 2">
+            <div class="step-header">
+              <mat-icon>description</mat-icon>
+              <h2>Detalhes do Curso</h2>
+              <p>Adicione uma descrição detalhada do conteúdo</p>
+            </div>
+
+            <div class="form-fields">
+              <div class="field-group">
+                <mat-form-field appearance="outline" class="full-width">
+                  <mat-label>Descrição do Curso</mat-label>
+                  <textarea matInput formControlName="description"
+                    placeholder="Descreva o que os alunos vão aprender neste curso..." rows="6"
+                    (input)="validateStep2()"></textarea>
+                  <mat-icon matSuffix>description</mat-icon>
+                  <mat-hint align="start">Seja específico sobre o conteúdo e objetivos</mat-hint>
+                  <mat-hint align="end">{{ getDescriptionLength() }}/500</mat-hint>
+                  <mat-error *ngIf="isFieldInvalid('description')">
+                    {{ getErrorMessage("description") }}
+                  </mat-error>
+                </mat-form-field>
+              </div>
+
+              <!-- Additional Options -->
+              <div class="additional-options">
+                <mat-card class="option-card">
+                  <mat-card-header>
+                    <mat-card-title>
+                      <mat-icon>settings</mat-icon>
+                      Configurações Adicionais
+                    </mat-card-title>
+                  </mat-card-header>
+                  <mat-card-content>
+                    <div class="option-list">
+                      <mat-checkbox formControlName="hasPrerequisites">
+                        Este curso possui pré-requisitos
+                      </mat-checkbox>
+                      <mat-checkbox formControlName="isCertified">
+                        Oferece certificado de conclusão
+                      </mat-checkbox>
+                      <mat-checkbox formControlName="isActive">
+                        Curso ativo (visível no catálogo)
+                      </mat-checkbox>
+                    </div>
+                  </mat-card-content>
+                </mat-card>
+              </div>
+            </div>
+          </div>
+
+          <!-- Step 3: Review -->
+          <div class="form-step" *ngIf="currentStep === 3">
+            <div class="step-header">
+              <mat-icon>preview</mat-icon>
+              <h2>Revisão dos Dados</h2>
+              <p>Confira todas as informações antes de salvar</p>
+            </div>
+
+            <div class="review-content">
+              <mat-card class="review-card">
+                <mat-card-header>
+                  <div class="review-header">
+                    <div class="course-category">
+                      <mat-icon>{{
+                        getCategoryIcon(courseForm.get("category")?.value)
+                        }}</mat-icon>
+                      <span>{{ courseForm.get("category")?.value }}</span>
+                    </div>
+                  </div>
+                </mat-card-header>
+                <mat-card-content>
+                  <h3 class="course-title">
+                    {{ courseForm.get("name")?.value }}
+                  </h3>
+
+                  <div class="course-meta">
+                    <div class="meta-item">
+                      <mat-icon>schedule</mat-icon>
+                      <span>{{ courseForm.get("workload")?.value }} horas</span>
+                    </div>
+                    <div class="meta-item">
+                      <mat-icon>signal_cellular_alt</mat-icon>
+                      <span>{{
+                        getDifficulty(courseForm.get("workload")?.value)
+                        }}</span>
+                    </div>
+                  </div>
+
+                  <p class="course-description">
+                    {{ courseForm.get("description")?.value }}
+                  </p>
+
+                  <div class="course-features" *ngIf="hasAdditionalFeatures()">
+                    <h4>Características do Curso:</h4>
+                    <ul>
+                      <li *ngIf="courseForm.get('hasPrerequisites')?.value">
+                        <mat-icon>check_circle</mat-icon>
+                        Possui pré-requisitos
+                      </li>
+                      <li *ngIf="courseForm.get('isCertified')?.value">
+                        <mat-icon>check_circle</mat-icon>
+                        Oferece certificado
+                      </li>
+                      <li *ngIf="courseForm.get('isActive')?.value">
+                        <mat-icon>check_circle</mat-icon>
+                        Disponível no catálogo
+                      </li>
+                    </ul>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+
+          <!-- Navigation Buttons -->
+          <div class="form-navigation">
+            <div class="nav-buttons">
+              <button type="button" mat-button *ngIf="currentStep > 1" (click)="previousStep()" [disabled]="isLoading">
+                <mat-icon>chevron_left</mat-icon>
+                Anterior
+              </button>
+
+              <button type="button" mat-button (click)="onCancel()" [disabled]="isLoading">
+                <mat-icon>cancel</mat-icon>
+                Cancelar
+              </button>
+            </div>
+
+            <div class="nav-buttons">
+              <button type="button" mat-raised-button color="primary" *ngIf="currentStep < 3" (click)="nextStep()"
+                [disabled]="!canProceedToNextStep() || isLoading">
+                Próximo
+                <mat-icon>chevron_right</mat-icon>
+              </button>
+
+              <button type="submit" mat-raised-button color="primary" *ngIf="currentStep === 3"
+                [disabled]="courseForm.invalid || isLoading" class="submit-button">
+                <mat-icon *ngIf="!isLoading">{{
+                  isEditMode ? "save" : "add"
+                  }}</mat-icon>
+                <mat-icon *ngIf="isLoading" class="loading-icon">hourglass_empty</mat-icon>
+                {{ isEditMode ? "Atualizar" : "Criar" }} Curso
+              </button>
+            </div>
+          </div>
+        </form>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" *ngIf="isLoading">
+    <div class="loading-content">
+      <mat-icon class="loading-spinner">hourglass_empty</mat-icon>
+      <p>{{ isEditMode ? "Atualizando curso..." : "Criando curso..." }}</p>
+    </div>
+  </div>
+</div>

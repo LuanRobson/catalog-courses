@@ -1,0 +1,212 @@
+<div class="course-list-container">
+  <!-- Page Header -->
+  <div class="page-header">
+    <div class="header-content">
+      <div class="title-section">
+        <h1 class="page-title">Catálogo de Cursos</h1>
+        <p class="page-subtitle">
+          Gerencie e explore todos os cursos disponíveis
+        </p>
+      </div>
+      <div class="header-actions">
+        <button mat-fab color="primary" (click)="addNewCourse()" class="fab-button">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-section">
+    <mat-card class="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon">
+          <mat-icon>school</mat-icon>
+        </div>
+        <div class="stat-info">
+          <div class="stat-number">
+            {{ (filteredCourses$ | async)?.length || 0 }}
+          </div>
+          <div class="stat-label">Total de Cursos</div>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon category">
+          <mat-icon>category</mat-icon>
+        </div>
+        <div class="stat-info">
+          <div class="stat-number">
+            {{ (categories$ | async)?.length || 0 }}
+          </div>
+          <div class="stat-label">Categorias</div>
+        </div>
+      </div>
+    </mat-card>
+
+    <mat-card class="stat-card">
+      <div class="stat-content">
+        <div class="stat-icon workload">
+          <mat-icon>schedule</mat-icon>
+        </div>
+        <div class="stat-info">
+          <div class="stat-number">{{ totalWorkload$ | async }}</div>
+          <div class="stat-label">Horas Totais</div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Filters Section -->
+  <mat-card class="filters-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>filter_list</mat-icon>
+        Filtros
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="filters-grid">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Buscar cursos</mat-label>
+          <input matInput [formControl]="searchControl" placeholder="Digite para buscar..." />
+          <mat-icon matPrefix>search</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="category-field">
+          <mat-label>Categoria</mat-label>
+          <mat-select [formControl]="categoryFilter">
+            <mat-option value="">
+              <mat-icon>all_inclusive</mat-icon>
+              Todas as categorias
+            </mat-option>
+            <mat-option *ngFor="let category of categories$ | async" [value]="category">
+              <mat-icon>{{ getCategoryIcon(category) }}</mat-icon>
+              {{ category }}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div class="filter-actions">
+          <button mat-stroked-button (click)="clearFilters()" class="clear-button">
+            <mat-icon>clear</mat-icon>
+            Limpar
+          </button>
+          <button mat-raised-button color="primary" (click)="applyFilters()" class="apply-button">
+            <mat-icon>filter_alt</mat-icon>
+            Filtrar
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Course Cards Grid -->
+  <div class="courses-section">
+    <div class="section-header">
+      <h2>Cursos Disponíveis</h2>
+      <div class="view-controls">
+        <mat-button-toggle-group [value]="viewMode" (change)="changeViewMode($event)">
+          <mat-button-toggle value="grid">
+            <mat-icon>grid_view</mat-icon>
+          </mat-button-toggle>
+          <mat-button-toggle value="list">
+            <mat-icon>list</mat-icon>
+          </mat-button-toggle>
+        </mat-button-toggle-group>
+      </div>
+    </div>
+
+    <div class="courses-grid" [class.list-view]="viewMode === 'list'" *ngIf="filteredCourses$ | async as courses">
+      <mat-card *ngFor="let course of courses; trackBy: trackByCourseId" class="course-card"
+        [class.featured]="course.workload >= 60">
+        <!-- Course Header -->
+        <div class="card-header">
+          <div class="category-badge">
+            <mat-icon>{{ getCategoryIcon(course.category) }}</mat-icon>
+            <span>{{ course.category }}</span>
+          </div>
+          <div class="course-actions">
+            <button mat-icon-button [matMenuTriggerFor]="courseMenu" class="menu-button">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+          </div>
+        </div>
+
+        <!-- Course Content -->
+        <mat-card-content class="card-content">
+          <h3 class="course-title">{{ course.name }}</h3>
+          <p class="course-description">{{ course.description }}</p>
+
+          <div class="course-meta">
+            <div class="meta-item">
+              <mat-icon>schedule</mat-icon>
+              <span>{{ course.workload }}h</span>
+            </div>
+            <div class="meta-item">
+              <mat-icon>calendar_today</mat-icon>
+              <span>{{ course.createdAt | date: "MMM yyyy" }}</span>
+            </div>
+            <div class="difficulty-badge" [attr.data-difficulty]="getDifficulty(course.workload)">
+              {{ getDifficulty(course.workload) }}
+            </div>
+          </div>
+        </mat-card-content>
+
+        <!-- Course Actions -->
+        <mat-card-actions class="card-actions">
+          <button mat-stroked-button color="primary" (click)="viewCourse(course)" class="action-button">
+            <mat-icon>visibility</mat-icon>
+            <span>Ver Detalhes</span>
+          </button>
+          <button mat-stroked-button color="accent" (click)="editCourse(course)" class="action-button">
+            <mat-icon>edit</mat-icon>
+            <span>Editar</span>
+          </button>
+        </mat-card-actions>
+
+        <!-- Menu Context -->
+        <mat-menu #courseMenu="matMenu">
+          <button mat-menu-item (click)="viewCourse(course)">
+            <mat-icon>visibility</mat-icon>
+            <span>Ver Detalhes</span>
+          </button>
+          <button mat-menu-item (click)="editCourse(course)">
+            <mat-icon>edit</mat-icon>
+            <span>Editar</span>
+          </button>
+          <button mat-menu-item (click)="duplicateCourse(course)">
+            <mat-icon>content_copy</mat-icon>
+            <span>Duplicar</span>
+          </button>
+          <mat-divider></mat-divider>
+          <button mat-menu-item (click)="deleteCourse(course)" class="delete-action">
+            <mat-icon>delete</mat-icon>
+            <span>Excluir</span>
+          </button>
+        </mat-menu>
+      </mat-card>
+    </div>
+
+    <!-- Empty State -->
+    <div class="empty-state" *ngIf="(filteredCourses$ | async)?.length === 0">
+      <div class="empty-icon">
+        <mat-icon>school</mat-icon>
+      </div>
+      <h3>Nenhum curso encontrado</h3>
+      <p>Não encontramos cursos que correspondam aos seus filtros.</p>
+      <div class="empty-actions">
+        <button mat-stroked-button (click)="clearFilters()">
+          <mat-icon>refresh</mat-icon>
+          Limpar Filtros
+        </button>
+        <button mat-raised-button color="primary" (click)="addNewCourse()">
+          <mat-icon>add</mat-icon>
+          Criar Primeiro Curso
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,322 @@
+<div class="course-detail-container">
+  <!-- Hero Section -->
+  <div class="hero-section" *ngIf="course$ | async as course">
+    <div class="hero-background">
+      <div class="hero-content">
+        <nav class="breadcrumb-nav">
+          <button mat-button (click)="goBack()" class="breadcrumb-button">
+            <mat-icon>arrow_back</mat-icon>
+            <span>Voltar ao Catálogo</span>
+          </button>
+          <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+          <span class="breadcrumb-current">Detalhes do Curso</span>
+        </nav>
+
+        <div class="course-header">
+          <div class="header-main">
+            <div class="category-badge">
+              <mat-icon>{{ getCategoryIcon(course.category) }}</mat-icon>
+              <span>{{ course.category }}</span>
+            </div>
+            <h1 class="course-title">{{ course.name }}</h1>
+            <div class="course-meta">
+              <div class="meta-item">
+                <mat-icon>schedule</mat-icon>
+                <span>{{ course.workload }} horas</span>
+              </div>
+              <div class="meta-item">
+                <mat-icon>signal_cellular_alt</mat-icon>
+                <span>{{ getDifficulty(course.workload) }}</span>
+              </div>
+              <div class="meta-item">
+                <mat-icon>calendar_today</mat-icon>
+                <span>Criado em {{ course.createdAt | date: "MMM yyyy" }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="header-actions">
+            <button
+              mat-fab
+              color="accent"
+              (click)="editCourse(course)"
+              matTooltip="Editar curso"
+            >
+              <mat-icon>edit</mat-icon>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Content Section -->
+  <div class="content-section" *ngIf="course$ | async as course; else loading">
+    <div class="content-grid">
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Course Description -->
+        <mat-card class="content-card description-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>description</mat-icon>
+              Sobre o Curso
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="course-description">{{ course.description }}</p>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Course Details -->
+        <mat-card class="content-card details-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>info</mat-icon>
+              Informações Detalhadas
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="details-grid">
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <mat-icon>schedule</mat-icon>
+                </div>
+                <div class="detail-content">
+                  <h4>Duração</h4>
+                  <p>{{ course.workload }} horas de conteúdo</p>
+                  <small>Estimativa baseada em ritmo normal de estudo</small>
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <mat-icon>trending_up</mat-icon>
+                </div>
+                <div class="detail-content">
+                  <h4>Nível</h4>
+                  <p>{{ getDifficulty(course.workload) }}</p>
+                  <small>{{ getDifficultyDescription(course.workload) }}</small>
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <mat-icon>category</mat-icon>
+                </div>
+                <div class="detail-content">
+                  <h4>Categoria</h4>
+                  <p>{{ course.category }}</p>
+                  <small>Área de conhecimento principal</small>
+                </div>
+              </div>
+
+              <div class="detail-item">
+                <div class="detail-icon">
+                  <mat-icon>language</mat-icon>
+                </div>
+                <div class="detail-content">
+                  <h4>Idioma</h4>
+                  <p>Português</p>
+                  <small>Conteúdo em português brasileiro</small>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Timeline -->
+        <mat-card class="content-card timeline-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>timeline</mat-icon>
+              Histórico do Curso
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="timeline">
+              <div class="timeline-item">
+                <div class="timeline-icon created">
+                  <mat-icon>add_circle</mat-icon>
+                </div>
+                <div class="timeline-content">
+                  <h4>Curso Criado</h4>
+                  <p>{{ course.createdAt | date: "dd/MM/yyyy 'às' HH:mm" }}</p>
+                  <small>Curso adicionado ao catálogo</small>
+                </div>
+              </div>
+
+              <div
+                class="timeline-item"
+                *ngIf="
+                  course.updatedAt && course.updatedAt !== course.createdAt
+                "
+              >
+                <div class="timeline-icon updated">
+                  <mat-icon>update</mat-icon>
+                </div>
+                <div class="timeline-content">
+                  <h4>Última Atualização</h4>
+                  <p>{{ course.updatedAt | date: "dd/MM/yyyy 'às' HH:mm" }}</p>
+                  <small>Informações do curso foram atualizadas</small>
+                </div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Quick Actions -->
+        <mat-card class="sidebar-card actions-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>flash_on</mat-icon>
+              Ações Rápidas
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="actions-list">
+              <button
+                mat-stroked-button
+                color="primary"
+                (click)="editCourse(course)"
+                class="action-btn"
+              >
+                <mat-icon>edit</mat-icon>
+                <span>Editar Curso</span>
+              </button>
+
+              <button
+                mat-stroked-button
+                (click)="duplicateCourse(course)"
+                class="action-btn"
+              >
+                <mat-icon>content_copy</mat-icon>
+                <span>Duplicar Curso</span>
+              </button>
+
+              <button
+                mat-stroked-button
+                (click)="shareCourse(course)"
+                class="action-btn"
+              >
+                <mat-icon>share</mat-icon>
+                <span>Compartilhar</span>
+              </button>
+
+              <mat-divider></mat-divider>
+
+              <button
+                mat-stroked-button
+                color="warn"
+                (click)="deleteCourse(course)"
+                class="action-btn delete-btn"
+              >
+                <mat-icon>delete</mat-icon>
+                <span>Excluir Curso</span>
+              </button>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Course Stats -->
+        <mat-card class="sidebar-card stats-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>analytics</mat-icon>
+              Estatísticas
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div class="stats-list">
+              <div class="stat-item">
+                <div class="stat-value">{{ course.id }}</div>
+                <div class="stat-label">ID do Curso</div>
+              </div>
+
+              <div class="stat-item">
+                <div class="stat-value">
+                  {{ getEstimatedWeeks(course.workload) }}
+                </div>
+                <div class="stat-label">Semanas Estimadas</div>
+              </div>
+
+              <div class="stat-item">
+                <div class="stat-value">0</div>
+                <div class="stat-label">Visualizações</div>
+              </div>
+            </div>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Related Courses -->
+        <mat-card class="sidebar-card related-card">
+          <mat-card-header>
+            <mat-card-title>
+              <mat-icon>school</mat-icon>
+              Cursos Relacionados
+            </mat-card-title>
+          </mat-card-header>
+          <mat-card-content>
+            <div
+              class="related-courses"
+              *ngIf="relatedCourses$ | async as relatedCourses"
+            >
+              <div
+                *ngFor="let relatedCourse of relatedCourses"
+                class="related-course-item"
+                (click)="viewCourse(relatedCourse)"
+              >
+                <div class="related-course-info">
+                  <h5>{{ relatedCourse.name }}</h5>
+                  <p>{{ relatedCourse.workload }}h</p>
+                </div>
+                <mat-icon>chevron_right</mat-icon>
+              </div>
+            </div>
+            <div
+              *ngIf="(relatedCourses$ | async)?.length === 0"
+              class="no-related"
+            >
+              <p>Nenhum curso relacionado encontrado</p>
+            </div>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <ng-template #loading>
+    <div class="loading-state">
+      <div class="loading-content">
+        <mat-icon class="loading-icon">hourglass_empty</mat-icon>
+        <h3>Carregando detalhes do curso...</h3>
+        <p>Por favor, aguarde enquanto buscamos as informações.</p>
+      </div>
+    </div>
+  </ng-template>
+
+  <!-- Error State -->
+  <div *ngIf="(course$ | async) === null" class="error-state">
+    <div class="error-content">
+      <mat-icon class="error-icon">error_outline</mat-icon>
+      <h3>Curso não encontrado</h3>
+      <p>
+        O curso que você está procurando não existe ou foi removido do catálogo.
+      </p>
+      <div class="error-actions">
+        <button mat-raised-button color="primary" (click)="goBack()">
+          <mat-icon>arrow_back</mat-icon>
+          Voltar ao Catálogo
+        </button>
+        <button mat-stroked-button (click)="refreshPage()">
+          <mat-icon>refresh</mat-icon>
+          Tentar Novamente
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
