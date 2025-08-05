@@ -183,7 +183,6 @@ export class CourseListComponent implements OnInit, OnDestroy {
         url: url,
       });
     } else {
-      // Fallback: copy to clipboard
       navigator.clipboard.writeText(url);
     }
   }

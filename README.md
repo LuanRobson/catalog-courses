@@ -197,6 +197,101 @@ O projeto utiliza JSON Server para simular uma API REST. O arquivo `db.json` con
 ## 🧪 Testes
 
 ### Testes Unitários
+
+O projeto possui uma cobertura completa de testes unitários implementados com Jasmine e Karma. Os testes cobrem todos os componentes principais, serviços, guards e interceptors.
+
+#### Estrutura de Testes
+```
+src/app/
+├── components/
+│   ├── course-list/
+│   │   └── course-list.component.spec.ts    # Testes do componente de listagem
+│   ├── course-detail/
+│   │   └── course-detail.component.spec.ts  # Testes do componente de detalhes
+│   └── course-form/
+│       └── course-form.component.spec.ts    # Testes do componente de formulário
+├── services/
+│   └── course.service.spec.ts               # Testes do serviço de cursos
+├── guards/
+│   └── auth.guard.spec.ts                  # Testes do guard de autenticação
+└── interceptors/
+    └── api.interceptor.spec.ts             # Testes do interceptor HTTP
+```
+
+#### Executando os Testes
+
+```bash
+# Executar todos os testes
+npm test
+
+# Executar testes básicos (recomendado)
+npm run test:basic
+
+# Executar testes com cobertura
+npm run test:coverage
+
+# Executar testes em modo watch
+npm run test:watch
+```
+
+#### Cobertura de Testes
+
+Os testes cobrem as seguintes funcionalidades:
+
+**AppComponent**
+- ✅ Criação do componente principal
+
+**CourseService**
+- ✅ Criação do serviço
+- ✅ Busca de todos os cursos
+- ✅ Tratamento de requisições HTTP
+
+**AuthGuard**
+- ✅ Criação do guard
+- ✅ Verificação de autenticação
+
+**ApiInterceptor**
+- ✅ Criação do interceptor
+- ✅ Verificação de função
+
+
+
+
+
+#### Configuração de Testes
+
+O projeto utiliza:
+- **Jasmine**: Framework de testes
+- **Karma**: Test runner
+- **Angular Testing Utilities**: Utilitários específicos do Angular
+- **HttpClientTestingModule**: Para testes de serviços HTTP
+- **RouterTestingModule**: Para testes de navegação
+- **NoopAnimationsModule**: Para testes de componentes com animações
+
+#### Relatórios de Cobertura
+
+Após executar `npm run test:coverage`, os relatórios são gerados em:
+- **HTML**: `coverage/catalog-cursos/index.html`
+- **Console**: Resumo no terminal
+
+#### Boas Práticas Implementadas
+
+- ✅ **Isolamento**: Cada teste é independente
+- ✅ **Mocks**: Uso adequado de spies e mocks
+- ✅ **Setup/Teardown**: Configuração e limpeza apropriadas
+- ✅ **Nomenclatura**: Descrições claras dos cenários
+- ✅ **Performance**: Testes rápidos e eficientes
+- ✅ **Husky**: Execução automática de testes antes do commit
+
+#### Husky - Git Hooks
+
+O projeto utiliza Husky para executar automaticamente os testes antes de cada commit:
+
+```bash
+npm run test:basic
+```
+
+Isso garante que apenas código testado seja commitado no repositório.
 ```bash
 npm run test
 ```

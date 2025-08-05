@@ -4,12 +4,15 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
+    "dev": "concurrently \"npm run server\" \"npm run start\"",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:catalog-cursos": "node dist/catalog-cursos/server/server.mjs",
+    "test:coverage": "ng test --code-coverage",
+    "test:watch": "ng test --watch",
+    "test:basic": "ng test --watch=false --browsers=ChromeHeadless --include=\"**/app.component.spec.ts\" --include=\"**/course.service.spec.ts\" --include=\"**/auth.guard.spec.ts\" --include=\"**/api.interceptor.spec.ts\"",
     "server": "json-server --watch db.json --port 3000",
-    "dev": "concurrently \"npm run server\" \"npm run start\""
+    "prepare": "husky"
   },
   "prettier": {
     "overrides": [
@@ -49,6 +52,7 @@
     "@types/jasmine": "~5.1.0",
     "@types/node": "^20.17.19",
     "concurrently": "^8.2.2",
+    "husky": "^9.1.7",
     "jasmine-core": "~5.8.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

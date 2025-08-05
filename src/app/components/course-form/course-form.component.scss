@@ -126,12 +126,6 @@
             transition: all 0.3s ease;
             background: #e0e0e0;
             color: #666;
-
-            mat-icon {
-              font-size: 24px;
-              width: 24px;
-              height: 24px;
-            }
           }
 
           .step-label {
@@ -292,9 +286,7 @@
                   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
 
                   mat-card-header {
-                    background: linear-gradient(135deg,
-                        #f8f9ff 0%,
-                        #f0f2ff 100%);
+                    background: linear-gradient(135deg, #f8f9ff 0%, #f0f2ff 100%);
 
                     mat-card-title {
                       display: flex;
@@ -339,9 +331,7 @@
                     display: inline-flex;
                     align-items: center;
                     gap: 8px;
-                    background: linear-gradient(135deg,
-                        #667eea 0%,
-                        #764ba2 100%);
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
                     color: white;
                     padding: 8px 16px;
                     border-radius: 20px;
@@ -507,17 +497,6 @@
         font-weight: 500;
       }
     }
-  }
-}
-
-// Animations
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
   }
 }
 
